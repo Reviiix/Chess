@@ -34,13 +34,13 @@ namespace ChessBoard
 
         private void SetIndices()
         {
-            SetColumnAndRowAssumingNormalChessBoard();
-            ChessBoard.amountOfSegments++;
+            SetColumnAndRow();
+            Board.amountOfSegments++;
         }
 
-        private void SetColumnAndRowAssumingNormalChessBoard()
+        private void SetColumnAndRow()
         {
-            var amountOfSegments = ChessBoard.amountOfSegments;
+            var amountOfSegments = Board.amountOfSegments;
             segmentIndex = amountOfSegments;
             
             if (amountOfSegments > 0 && amountOfSegments <= 7)
@@ -75,43 +75,33 @@ namespace ChessBoard
             {
                 row = 7;
             }
-            column = amountOfSegments - (ChessBoard.Columns*row);
+            column = amountOfSegments - (Board.Columns*row);
         }
 
         private void ButtonPressed()
         {
             if (occupation.Key)
             {
-                if (GameManager.activeTeam != occupation.Value.whiteOrBlackTeam)
+                if (GameManager.activeTeam != occupation.Value.team)
                 {
                     SetSelection(true);
-                    ChessBoard.ChessBoardSegmentButtonPressed(this);
+                    Board.ChessBoardSegmentButtonPressed(this);
                     return;
                 }
                 
-                ChessBoard.ChessPieceSelected(occupation.Value);
+                Board.ChessPieceSelected(occupation.Value);
                 occupation.Value.SetSelected(true);
                 return;
             }
             SetSelection(true);
-            ChessBoard.ChessBoardSegmentButtonPressed(this);
+            Board.ChessBoardSegmentButtonPressed(this);
         }
 
         public void SetSelection(bool state)
         {
             selected = state;
-            SetSelectionGraphics(selected);
         }
         
-        private void SetSelectionGraphics(bool state)
-        {
-            if (state)
-            {
-                segment.color = Color.red;
-                return;
-            }
-            segment.color = Color.white;
-        }
 
         public void OccupyThisSegment(ChessPiece piece)
         {

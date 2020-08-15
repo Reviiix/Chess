@@ -11,11 +11,11 @@ namespace ChessPieces
     public class ChessPiece 
     {
         [HideInInspector]
-        public bool whiteOrBlackTeam; //true == White //false == black
+        public bool team; //true == White //false == black
         
-        public KeyValuePair<Directions, int>[] movesDirectionAndDistance;
-        private BoardSegment currentBoardSegement;
-        private BoardSegment previousPosition;
+        public KeyValuePair<Directions, int>[] movesList;
+        private BoardSegment _currentBoardSegment;
+        private BoardSegment _previousPosition;
         [SerializeField]
         private RawImage image;
 
@@ -23,7 +23,7 @@ namespace ChessPieces
         {
             SetMovesCapabilities();
 
-            currentBoardSegement = startingSegment;
+            _currentBoardSegment = startingSegment;
         }
 
         public void PieceAttacked()
@@ -46,7 +46,7 @@ namespace ChessPieces
             }
             if (newPosition.occupation.Key)
             {
-                if (newPosition.occupation.Value.whiteOrBlackTeam != whiteOrBlackTeam)
+                if (newPosition.occupation.Value.team != team)
                 {
                     GameManager.TakePiece(newPosition);
                     MovePiece(newPosition);
@@ -62,11 +62,11 @@ namespace ChessPieces
         {
             image.transform.position = newPosition.segment.transform.position;
 
-            previousPosition = currentBoardSegement;
-            currentBoardSegement = newPosition;
+            _previousPosition = _currentBoardSegment;
+            _currentBoardSegment = newPosition;
 
-            currentBoardSegement.OccupyThisSegment(this);
-            previousPosition.OccupyThisSegment(null);
+            _currentBoardSegment.OccupyThisSegment(this);
+            _previousPosition.OccupyThisSegment(null);
 
             GameManager.ChangeActiveTeam();
         }
@@ -74,7 +74,7 @@ namespace ChessPieces
 
         private bool IsLegitimateMove(BoardSegment newPosition)
         {
-            var potentialMoves = ReturnAllPotentialPositions(currentBoardSegement, movesDirectionAndDistance);
+            var potentialMoves = ReturnAllPotentialPositions(_currentBoardSegment, movesList);
 
             return potentialMoves.Any(move => newPosition == move);
         }

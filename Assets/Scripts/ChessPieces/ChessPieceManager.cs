@@ -22,7 +22,7 @@ namespace ChessPieces
         {
             foreach (var pawn in pawnsWhite)
             {
-                pawn.whiteOrBlackTeam = true;
+                pawn.team = true;
             }
         }
         
@@ -30,7 +30,7 @@ namespace ChessPieces
         {
             foreach (var pawn in pawnsBlack)
             {
-                pawn.whiteOrBlackTeam = false;
+                pawn.team = false;
             }
         }
     }

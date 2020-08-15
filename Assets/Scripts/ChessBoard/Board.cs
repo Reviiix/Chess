@@ -6,32 +6,36 @@ using UnityEngine;
 namespace ChessBoard
 {
     [Serializable]
-    public class ChessBoard
+    public class Board
     {
-        private ChessPieceManager chessPieceManager;
-        public BoardSegment[] segments;
-        public static BoardSegment currentSegmentSelection;
-        public static BoardSegment previousSegmentSelection;
+        private ChessPieceManager _chessPieceManager;
+        [SerializeField]
+        private BoardSegment[] segments;
+        public static int amountOfSegments = 0;
+        private static BoardSegment _currentSegmentSelection;
+        private static BoardSegment _previousSegmentSelection;
 
         public static ChessPiece chessPieceSelection;
-        public static int amountOfSegments = 0;
         public const int Rows = 8;
         public const int Columns = 8;
+        private static Transform _selectionIcon;
         
 
         public void Initialise()
         {
-            chessPieceManager = GameManager.Instance.chessPieceManager;
+            _chessPieceManager = GameManager.instance.chessPieceManager;
+
+            _selectionIcon = GameManager.instance.selectionIcon;
                 
             InitialiseSegments();
-            
-            previousSegmentSelection = GameManager.Instance.chessBoard.segments[12]; //DELETE???
-            currentSegmentSelection = GameManager.Instance.chessBoard.segments[12];
-            
-            SetPiecesInitialPositions();
-            chessPieceSelection = chessPieceManager.pawnsWhite[0];
-
             InitialiseChessPieceMoves();
+            SetPiecesInitialPositions();
+            
+            
+            //Setting variables so theyre not null on first move
+            _previousSegmentSelection = GameManager.instance.board.segments[12]; //DELETE???
+            _currentSegmentSelection = GameManager.instance.board.segments[12];
+            chessPieceSelection = _chessPieceManager.pawnsWhite[0];
         }
 
         public void Enabled()
@@ -48,10 +52,10 @@ namespace ChessBoard
         
         private void InitialiseChessPieceMoves()
         {
-            for (var i = 0; i < chessPieceManager.pawnsBlack.Length; i++)
+            for (var i = 0; i < _chessPieceManager.pawnsBlack.Length; i++)
             {
-                chessPieceManager.pawnsWhite[i].Initialise(segments[i + 8]);
-                chessPieceManager.pawnsBlack[i].Initialise(segments[i + 48]);
+                _chessPieceManager.pawnsWhite[i].Initialise(segments[i + 8]);
+                _chessPieceManager.pawnsBlack[i].Initialise(segments[i + 48]);
             }
         }
 
@@ -61,11 +65,11 @@ namespace ChessBoard
             {
                 if (segment.row == 1)
                 {
-                    segment.OccupyThisSegment(chessPieceManager.pawnsWhite[segment.column]);
+                    segment.OccupyThisSegment(_chessPieceManager.pawnsWhite[segment.column]);
                 }
                 if (segment.row == 6)
                 {
-                    segment.OccupyThisSegment(chessPieceManager.pawnsBlack[segment.column]);
+                    segment.OccupyThisSegment(_chessPieceManager.pawnsBlack[segment.column]);
                 }
             }
         }
@@ -80,10 +84,10 @@ namespace ChessBoard
         
         public static void ChessBoardSegmentButtonPressed(BoardSegment newSelection)
         {
-            previousSegmentSelection = currentSegmentSelection;
-            previousSegmentSelection.SetSelection(false);
-
-            currentSegmentSelection = newSelection;
+            _selectionIcon.position = newSelection.segment.transform.position;
+            _previousSegmentSelection = _currentSegmentSelection;
+            _previousSegmentSelection.SetSelection(false);
+            _currentSegmentSelection = newSelection;
         }
         
         private static void ResetPieceSelected(bool activeTeam)
@@ -124,7 +128,7 @@ namespace ChessBoard
                     Debug.Log("Select Something");
                     return;
                 }
-                chessPieceSelection.AttemptToMove(currentSegmentSelection);
+                chessPieceSelection.AttemptToMove(_currentSegmentSelection);
             }
         }
         

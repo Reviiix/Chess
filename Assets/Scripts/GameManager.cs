@@ -5,9 +5,10 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public static GameManager Instance;
-    public ChessBoard.ChessBoard chessBoard;
+    public static GameManager instance;
+    public Board board;
     public ChessPieceManager chessPieceManager;
+    public Transform selectionIcon;
     
     public static bool activeTeam = true; //true == White //false == black
 
@@ -16,24 +17,24 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        Instance = this;
-        chessBoard.Initialise();
+        instance = this;
+        board.Initialise();
         chessPieceManager.Initialise();
     }
     
     private void Update()
     {
-        chessBoard.ChessBoardUpdate();
+        board.ChessBoardUpdate();
     }
 
     private void OnEnable()
     {
-        chessBoard.Enabled();
+        board.Enabled();
     }
     
     private void OnDisable()
     {
-        chessBoard.Disabled();
+        board.Disabled();
     }
 
     public static void ChangeActiveTeam()
